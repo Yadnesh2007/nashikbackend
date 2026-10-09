@@ -815,8 +815,15 @@ body.on-signin #quarantineBanner {
       <div class="r" style="display:flex; background:#0F1C2B; border-radius:14px; overflow:hidden; color:#EDE9DF;">
 
         <!-- Left Showcase -->
-        <section style="flex:1.2; padding:48px 56px; display:flex; flex-direction:column; justify-content:space-between;">
-          <div style="display:flex; align-items:center; gap:12px; font-weight:600;">
+        <section style="flex:1.2; padding:48px 56px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden;">
+          <!-- Animated Video Background -->
+          <video autoplay loop muted playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.42; z-index:0; pointer-events:none;" poster="/static/assets/signin_bg_poster.jpg">
+            <source src="/static/assets/signin_bg_video.mp4" type="video/mp4">
+          </video>
+          <!-- Subtle dark overlay to preserve rich parchment-gold contrast -->
+          <div style="position:absolute; inset:0; background:linear-gradient(135deg, rgba(15,28,43,0.65) 0%, rgba(15,28,43,0.45) 100%); z-index:0; pointer-events:none;"></div>
+
+          <div style="display:flex; align-items:center; gap:12px; font-weight:600; position:relative; z-index:1;">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D9A441" stroke-width="1.8">
               <path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"></path>
               <path d="M8.5 12l2.5 2.5L16 9.5"></path>
@@ -824,7 +831,7 @@ body.on-signin #quarantineBanner {
             <span style="font-size:18px;">EvidenceShield AI</span>
           </div>
 
-          <div style="margin:40px 0;">
+          <div style="margin:40px 0; position:relative; z-index:1;">
             <p class="mono" style="margin:0 0 14px; font-size:11.5px; letter-spacing:.16em; color:#B9B4A6;">
               TAMPER-EVIDENT · ZERO-TRUST · JUDICIAL RECORD
             </p>
@@ -860,7 +867,7 @@ body.on-signin #quarantineBanner {
             </svg>
           </div>
 
-          <p class="mono" style="margin:0; font-size:12px; color:#8F8B7F;">
+          <p class="mono" style="margin:0; font-size:12px; color:#8F8B7F; position:relative; z-index:1;">
             Zero-Trust Rule: No evidence is revealed prior to cryptographic token verification.
           </p>
         </section>
