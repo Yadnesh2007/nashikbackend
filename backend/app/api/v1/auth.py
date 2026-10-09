@@ -17,9 +17,10 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 class LoginRequest(BaseModel):
     username: str
-    password: str
+    password: str = "password"
     role: str = "POLICE"
     agency: str = "MUMBAI_CRIME_BRANCH"
+    mfa_verified: bool = False
 
 
 class MfaVerifyRequest(BaseModel):
@@ -34,7 +35,7 @@ async def login(req: LoginRequest, response: Response):
         username=req.username,
         role=req.role,
         agency=req.agency,
-        mfa_verified=False,
+        mfa_verified=req.mfa_verified,
     )
 
     response.set_cookie(
@@ -49,9 +50,11 @@ async def login(req: LoginRequest, response: Response):
     return {
         "status": "success",
         "user_id": req.username,
+        "username": req.username,
         "role": req.role,
         "agency": req.agency,
         "token": token,
+        "access_token": token,
         "csrf_token": csrf_token,
     }
 

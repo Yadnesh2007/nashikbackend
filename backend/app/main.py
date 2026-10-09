@@ -107,3 +107,25 @@ app.include_router(alerts_router, prefix=settings.api_prefix)
 app.include_router(analysis_router, prefix=settings.api_prefix)
 app.include_router(exports_router, prefix=settings.api_prefix)
 app.include_router(audit_router, prefix=settings.api_prefix)
+
+import os
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
+FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend"))
+FRONTEND_HTML = os.path.join(FRONTEND_DIR, "index.html")
+
+if os.path.isdir(FRONTEND_DIR):
+    app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+
+
+@app.get("/")
+@app.get("/portal")
+async def serve_portal():
+    if os.path.exists(FRONTEND_HTML):
+        return FileResponse(FRONTEND_HTML, media_type="text/html")
+    fallback_dl = "/Users/yadnesh/Downloads/evidenceshield-ai/frontend/index.html"
+    if os.path.exists(fallback_dl):
+        return FileResponse(fallback_dl, media_type="text/html")
+    return {"message": "EvidenceShield AI API active. Frontend index.html not found."}
+

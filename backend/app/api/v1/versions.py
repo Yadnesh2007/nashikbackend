@@ -96,6 +96,36 @@ async def verify_version(
     return result
 
 
+@router.post("/versions/{id}/tamper")
+async def simulate_tamper(
+    id: str,
+    db: AsyncSession = Depends(get_db),
+    user: SessionUser = Depends(get_current_user),
+):
+    """Simulates 1-bit corruption in ciphertext to demonstrate zero-trust quarantine."""
+    from ...services.storage import storage_service
+    stmt = select(DocumentVersion).where(DocumentVersion.version_id == id)
+    res = await db.execute(stmt)
+    version = res.scalar_one_or_none()
+    if not version:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Version not found.")
+
+    ct = await storage_service.get_ciphertext(version.object_key)
+    corrupted_ct = bytearray(ct)
+    if len(corrupted_ct) > 0:
+        corrupted_ct[0] ^= 0x01  # Flip 1 single bit in ciphertext
+    await storage_service.put_ciphertext(version.object_key, bytes(corrupted_ct))
+
+    # Trigger multi-stage verification to quarantine immediately
+    result = await integrity_service.verify_version_integrity(db, id)
+    await db.commit()
+    return {
+        "tampered": True,
+        "detail": "Flipped bit 0 in ciphertext. Triggered multi-stage cryptographic detector.",
+        "verification_result": result,
+    }
+
+
 @router.get("/versions/{id}/passport")
 async def get_version_passport(
     id: str,

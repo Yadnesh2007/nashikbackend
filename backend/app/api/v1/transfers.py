@@ -108,3 +108,42 @@ async def reject_transfer(
         "responded_at": transfer.responded_at,
         "response_notes": transfer.response_notes,
     }
+
+
+@router.get("/cases/{id}/transfers")
+async def list_transfers(
+    id: str,
+    db: AsyncSession = Depends(get_db),
+    user: SessionUser = Depends(get_current_user),
+):
+    from sqlalchemy import select
+    from ...models.entities import CustodyTransfer
+    stmt = (
+        select(CustodyTransfer)
+        .where(CustodyTransfer.case_id == id)
+        .order_by(CustodyTransfer.initiated_at.desc())
+    )
+    res = await db.execute(stmt)
+    transfers = res.scalars().all()
+    gaps = await custody_service.detect_custody_gaps(db, id)
+    return {
+        "items": [
+            {
+                "transfer_id": t.transfer_id,
+                "version_id": t.version_id,
+                "case_id": t.case_id,
+                "sender_id": t.sender_id,
+                "sender_agency": t.sender_agency,
+                "recipient_id": t.recipient_id,
+                "recipient_agency": t.recipient_agency,
+                "state": t.state,
+                "reason": t.reason,
+                "initiated_at": t.initiated_at.isoformat() if t.initiated_at else None,
+                "responded_at": t.responded_at.isoformat() if t.responded_at else None,
+                "response_notes": t.response_notes,
+            }
+            for t in transfers
+        ],
+        "gaps": gaps,
+    }
+
