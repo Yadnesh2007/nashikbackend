@@ -6,7 +6,7 @@ import uuid
 from typing import Optional, Dict, Any, Tuple
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from evidenceshield_crypto import (
@@ -132,6 +132,15 @@ class IngestionService:
             session.add(document)
             await session.flush()
 
+        # Determine next version number for this document
+        v_num_stmt = (
+            select(func.max(DocumentVersion.version_number))
+            .where(DocumentVersion.document_id == document.document_id)
+        )
+        v_num_res = await session.execute(v_num_stmt)
+        max_v = v_num_res.scalar_one_or_none()
+        next_v_num = (max_v or 0) + 1
+
         version_id = str(uuid.uuid4())
         object_key = f"{upload_sess.case_id}/{document.document_id}/{version_id}.bin"
 
@@ -156,7 +165,7 @@ class IngestionService:
             version_id=version_id,
             document_id=document.document_id,
             case_id=upload_sess.case_id,
-            version_number=1,
+            version_number=next_v_num,
             state="READY_PENDING_ANCHOR",
             digest=digest_sha256,
             size_bytes=actual_size,

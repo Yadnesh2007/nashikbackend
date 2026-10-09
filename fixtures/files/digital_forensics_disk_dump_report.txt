@@ -1,0 +1,25 @@
+STATE FORENSIC SCIENCE LABORATORY (SFSL), KALINA, MUMBAI
+DEPARTMENT OF DIGITAL FORENSICS & CYBER EVIDENCE
+CERTIFICATE OF PHYSICAL BITSTREAM IMAGE & DATA EXTRACTION
+
+Forensic Evidence Item: SFSL-2026-CYBER-8812
+Reference FIR: FIR-2026-MUM-0891
+Seized Hardware: Samsung 990 PRO NVMe M.2 SSD (2TB, S/N: S6Z2NX0W91823)
+Acquisition Method: Hardware Write-Blocker (Tableau T8u Forensic USB 3.0 Bridge)
+Forensic Toolchain: Guymager v0.8.12 (Direct RAW dd bitstream image)
+
+ACQUISITION VERIFICATION HASHES:
+- Raw Physical Sector Count: 3,907,029,168 sectors (512 bytes/sector)
+- MD5 Verification: 4f9812a03bc7e163d891b9201a4e760c
+- SHA-256 Verification: e8b9401726a5c391f04e12849b772091c64a382170183bda92471c26019a84f3
+- Pre-imaging and Post-imaging hash values: IDENTICAL (100% Bit-level parity)
+
+EXTRACTED FINDINGS & ARTIFACTS:
+1. Automated Anti-Forensic Deletion: Attempted execution of 'srm -z -v' on path /var/log/audit.log at 2026-10-01 02:44:19 IST.
+2. Unallocated Space Recovery: Successfully carved 14 deleted SQLite databases containing WhatsApp & Telegram business conversation transcripts between primary suspect and offshore shell entity.
+3. Exfiltration Proof: Outbound SCP transfer initiated to IP 194.26.29.112 port 443 with 14.8 GB transferred on 2026-09-30 23:14:02 IST.
+
+EXAMINER CERTIFICATION:
+In accordance with Section 63 of Bharatiya Sakshya Adhiniyam 2023 (BSA) / Section 65B of Indian Evidence Act.
+Examiner: S. Patil, Senior Scientific Officer (Digital Forensics Grade I)
+License / Key Fingerprint: 4A81 9920 3BD1 CF67 2201 9A02

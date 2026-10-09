@@ -1,0 +1,23 @@
+NATIONAL PAYMENTS CORPORATION OF INDIA (NPCI) & RBI CORE BANKING AUDIT
+RESERVE BANK OF INDIA — OVERSIGHT OF PAYMENT AND SETTLEMENT SYSTEMS
+FORENSIC TRANSACTION LEDGER & SWIFT GATEWAY TRACE
+
+Investigation Reference: FIR-2026-PUN-0142
+Target Financial Entity: Global FinServe Tech Private Limited
+Audit Period: 2026-10-01 10:00:00 IST to 2026-10-01 18:00:00 IST
+
+AUTOMATED SETTLEMENT TRACE:
+1. Batch Settlement Ref: IMPS-20261001-PUN-8812901
+   Total Batch Amount: INR 2,40,00,000.00
+   Transfers in Batch: 480 micro-transactions across 92 distinct UPI Virtual Payment Addresses (VPAs)
+   Execution Interval: Sub-second burst execution (Average interval: 14.2 milliseconds)
+   Originating Mac Address: 00:1A:2B:3C:4D:5E (Unauthorized internal server VM-CORE-03)
+
+2. Host-to-Host (H2H) Gateway Verification:
+   Cryptographic MAC Token: d8a1290fbc2819e4a50192847c1a2e3894b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9
+   Validation Status: HMAC-SHA256 signature calculated with revoked credential 'finserve_ops_2025'
+   Revocation Timestamp in CRL: 2026-09-15 00:00:00 UTC (Bypassed internal HSM check)
+
+DISPOSITION:
+Evidence exhibits non-repudiation violation and fraudulent credential replay. Immediate asset freeze ordered under Section 102 CrPC / Section 106 BNSS.
+Auditor: Chief Vigilance Officer & Cyber Security Lead, State Bank of India

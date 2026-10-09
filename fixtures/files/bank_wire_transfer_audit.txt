@@ -1,0 +1,26 @@
+FINANCIAL INTELLIGENCE UNIT — INDIA (FIU-IND)
+MINISTRY OF FINANCE, GOVERNMENT OF INDIA
+SUSPICIOUS TRANSACTION REPORT (STR) & WIRE TRAIL TELEMETRY
+
+Investigation Case: FIR-2026-PUN-0142
+Reporting Entity: State Bank of India, Commercial Branch, Nariman Point
+STR Reference: STR-2026-FIU-9012481
+Target Entity: Apex Financial Advisory Pvt Ltd (PAN: AABCA1298P)
+
+TRANSACTION TELEMETRY BREAKDOWN:
+- Transaction 1: RTGS Ref #SBIN92610019284
+  Amount: INR 4,85,00,000.00
+  Timestamp: 2026-10-01 11:22:45.109 IST
+  Debit Account: #30981240918 (Apex Escrow)
+  Credit Account: #99012847101 (Cyprus Offshore Holdings Ltd)
+  Routing Gateway: SWIFT MT103 authenticated telemetry
+
+- Transaction 2: Automated Micro-Splitting (Smurfing pattern detected)
+  128 concurrent transfers of INR 49,500.00 each dispatched between 11:25:00 and 11:28:00 IST
+  Total Structured Amount: INR 63,36,000.00
+  Originating IP Addresses: Tor Exit Node cluster (185.220.101.5, 185.220.101.9)
+
+AUDIT TRAIL & PRESERVATION SEAL:
+- Core Banking System (CBS) transaction logs mirrored and signed by Bank Nodal Officer
+- Block Hash Integrity: 7c941a82e9b047f12e8b61a34c56e29910a38b5d7e129486c4f0391ab7e812d4
+- Custody Status: Handed over directly to Directorate of Enforcement (ED) and Pune Cyber Crime Cell

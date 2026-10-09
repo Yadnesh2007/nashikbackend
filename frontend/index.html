@@ -233,8 +233,15 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
       </div>
 
       <div class="actions">
+        <!-- Judicial Case Quick Selector -->
+        <select id="caseQuickSelect" class="fld" style="width:260px; height:38px; font-weight:600; border-color:#0F1C2B;">
+          <option value="c7b2a9e0-82a1-4b13-912f-6825a07e1123">FIR-2026-MUM-0891 (Mumbai Crime Branch)</option>
+          <option value="a1b2c3d4-1111-4b13-912f-000000000142">FIR-2026-PUN-0142 (Pune Cyber Crime Cell)</option>
+          <option value="b2c3d4e5-2222-4b13-912f-000000000518">CC-2026-NDLS-0518 (CBI Economic Offences)</option>
+        </select>
+
         <!-- Persona Quick Selector -->
-        <select id="roleQuickSelect" class="fld" style="width:190px; height:38px; font-weight:500;">
+        <select id="roleQuickSelect" class="fld" style="width:180px; height:38px; font-weight:500;">
           <option value="prosecutor_iyer">Prosecutor (A. Iyer)</option>
           <option value="officer_sharma">Police (R. Sharma)</option>
           <option value="examiner_patil">Forensic Lab (S. Patil)</option>
@@ -330,11 +337,13 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
             </h2>
           </div>
 
-          <div style="font-size:12px; line-height:1.8; color:#34404F; background:#F4F1EA; padding:12px 14px; border-radius:8px;">
-            <div><b>Record Status:</b> <span id="passportVersionId">Active Evidentiary Version</span></div>
-            <div><b>Hash Algorithm:</b> <span id="passportDigest">SHA-256 Validated</span></div>
-            <div><b>Digital Signature:</b> <span id="passportKeyRef">Ed25519 Judicial Authority</span></div>
-            <div><b>Merkle Proof:</b> <span id="passportMerkleCheckpoint">Cryptographically Bound to Root</span></div>
+          <div style="font-size:12px; line-height:1.75; color:#34404F; background:#F4F1EA; padding:12px 14px; border-radius:8px;">
+            <div><b>Version Status:</b> <span id="passportVersionNum" style="font-weight:600; color:#14202E;">v1 (Primary Seizure)</span></div>
+            <div style="margin-top:3px;"><b>SHA-256 Digest:</b> <div class="mono" id="passportDigest" style="font-size:10.5px; word-break:break-all; color:#17553E; margin-top:2px;">Sealed</div></div>
+            <div style="margin-top:4px;"><b>Encryption Scheme:</b> <span id="passportCipher" style="font-size:11.5px; font-weight:500;">AES-256-GCM (Vault Wrapped DEK)</span></div>
+            <div><b>Transit Key ID:</b> <span class="mono" id="passportKeyRef" style="font-size:10.5px;">transit/keys/evidenceshield-dek:v1</span></div>
+            <div><b>Telemetry:</b> <span id="passportFileMeta" style="font-weight:500;">644 bytes · application/pdf</span></div>
+            <div><b>Merkle Status:</b> <span id="passportMerkleCheckpoint" style="color:#17553E; font-weight:600;">Bound to Blockchain Checkpoint</span></div>
           </div>
 
           <div style="display:grid; gap:8px; font-size:13px;">
@@ -595,9 +604,9 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
               </div>
 
               <div style="padding:14px; border:1px solid #D6D0C2; border-radius:10px; background:#fff;">
-                <span class="b ok">witness_statement_002.pdf · Page 2</span>
+                <span class="b ok">cctv_surveillance_log_003.txt · Frame Log</span>
                 <p style="margin:10px 0 0; font-size:13.5px; line-height:1.6; color:#14202E;">
-                  "…Security gate log confirmed no vehicles exited between 14:00 and <mark style="background:#FCE8E6; color:#8E2222; padding:2px 4px; border-radius:3px;">15:30 IST</mark>, when the barrier opened for delivery…"
+                  "…Optical ANPR confirmed vehicle MH-01-AB-1234 crossing barrier at <mark style="background:#FCE8E6; color:#8E2222; padding:2px 4px; border-radius:3px;">14:14:52 IST</mark>, while manual gate log claimed no exit between 14:00 and 15:30 IST…"
                 </p>
               </div>
             </div>
@@ -1011,6 +1020,15 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
     loginPersona(e.target.value);
   };
 
+  if ($('caseQuickSelect')) {
+    $('caseQuickSelect').onchange = e => {
+      activeCaseId = e.target.value;
+      activeVersionId = null;
+      loadCaseWorkspace();
+      showToast(`Switched active judicial record: ${e.target.options[e.target.selectedIndex].text}`, 'info');
+    };
+  }
+
   $('btnKeycloakSso').onclick = () => {
     loginPersona('prosecutor_iyer');
     switchTab('workspace');
@@ -1024,6 +1042,22 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
       currentCaseData = await res.json();
 
       $('headerCaseTitle').textContent = `${currentCaseData.case_number} · ${currentCaseData.title}`;
+      if ($('headerCaseJurisdiction')) {
+        const agencyMap = {
+          'MUMBAI_CRIME_BRANCH': 'MUMBAI CRIME BRANCH & SESSIONS JURISDICTION',
+          'PUNE_CYBER_CRIME_CELL': 'PUNE POLICE & SPECIAL COURT JURISDICTION',
+          'CENTRAL_INVESTIGATION_AGENCY': 'CBI & SPECIAL ECONOMIC OFFENCES JURISDICTION',
+          'DELHI_SPECIAL_CELL': 'DELHI POLICE SPECIAL CELL JURISDICTION'
+        };
+        $('headerCaseJurisdiction').textContent = agencyMap[currentCaseData.agency] || `${currentCaseData.agency.replace(/_/g, ' ')} JURISDICTION`;
+      }
+      if ($('workspaceCustodySummary')) {
+        $('workspaceCustodySummary').innerHTML = `
+          Origin: Registered by ${currentCaseData.agency.replace(/_/g, ' ')}<br>
+          Current Custodian: <span style="font-weight:600;">State Forensic Science Laboratory</span><br>
+          Verification: <span class="b ok">VERIFIED RECEIPT</span>
+        `;
+      }
 
       renderDocumentsLedger(currentCaseData.documents || []);
     } catch (e) {
@@ -1098,9 +1132,29 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
       const res = await apiCall(`/versions/${versionId}`);
       if (res.ok) {
         const v = await res.json();
+        if ($('passportVersionNum')) {
+          $('passportVersionNum').textContent = `v${v.version_number} (Sealed Version)`;
+        }
+        if ($('passportDigest')) {
+          $('passportDigest').textContent = v.digest || 'Integrity Digest Pending';
+        }
+        if ($('passportCipher')) {
+          $('passportCipher').textContent = 'AES-256-GCM (Vault Envelope DEK)';
+        }
+        if ($('passportKeyRef')) {
+          $('passportKeyRef').textContent = 'transit/keys/evidenceshield-dek:v1';
+        }
+        if ($('passportFileMeta')) {
+          const kb = (v.size_bytes / 1024).toFixed(1);
+          $('passportFileMeta').textContent = `${kb} KB · ${v.mime_type || 'application/octet-stream'}`;
+        }
+        if ($('passportMerkleCheckpoint')) {
+          $('passportMerkleCheckpoint').textContent = v.state === 'VERIFIED_ANCHORED' ? 'Confirmed on Merkle Blockchain Root' : 'Ready Pending Next Anchor Batch';
+        }
+
         if (v.state === 'QUARANTINED') {
           $('passportStatusNotice').className = 'alert-quarantine';
-          $('passportStatusNotice').innerHTML = '<b>QUARANTINED:</b> Content locked due to integrity breach.';
+          $('passportStatusNotice').innerHTML = '<b>QUARANTINED:</b> Content locked due to bit-level integrity breach.';
           $('chkPassportSigned').style.color = '#8E2222';
           $('chkPassportSigned').textContent = '✕ Signature Revoked';
         } else {

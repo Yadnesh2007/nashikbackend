@@ -1,0 +1,23 @@
+COURT OF THE METROPOLITAN MAGISTRATE, 37TH COURT, ESPLANADE, MUMBAI
+STATEMENT OF WITNESS RECORDED UNDER SECTION 164 CODE OF CRIMINAL PROCEDURE, 1973
+(SECTION 183 OF BHARATIYA NAGARIK SURAKSHA SANHITA, 2023)
+
+In the Court of: Shri V. K. Adhav, Metropolitan Magistrate
+State vs. Unknown Suspects (FIR No. 0891/2026, BKC Cyber Police Station)
+
+Deponent Details:
+Name: Shri Sanjay Ramakant Deshmukh, Age: 44 Years
+Occupation: Head of Facility Physical Security, Horizon Financial Towers, BKC
+Address: Flat 402, Shivneri CHS, Kalanagar, Bandra (East), Mumbai 400051
+
+STATEMENT ON SOLEMN AFFIRMATION:
+"I am the chief security in-charge for Horizon Financial Towers. On the afternoon of 30th September 2026, around 14:10 hours, I was stationed at the Central Security Monitoring Console on the ground floor. 
+
+At precisely 14:14 hours, I observed a black SUV (registration MH-01-AB-1234) approach the automated barrier at Gate No. 4. The driver showed an emergency contractor pass. The boom barrier was raised at 14:14:52 IST. The vehicle did not stop for physical underbody mirror scanning and expedited its departure onto the main arterial road.
+
+Immediately thereafter, at 14:22 hours, our IT network administrator alerted the control room that unauthorized server cabinet access had triggered an alarm in Data Center Tier-3. I personally accompanied Sub-Inspector Sharma when he arrived at the premises at 14:45 hours and handed over the unedited digital logs under seal."
+
+Witness Signature: Sanjay R. Deshmukh
+Magistrate Seal & Attestation: V. K. Adhav, Metropolitan Magistrate
+Date & Time Recorded: 2026-10-02 11:30 IST
+Court Seal: SEAL_OF_METROPOLITAN_MAGISTRATE_MUMBAI

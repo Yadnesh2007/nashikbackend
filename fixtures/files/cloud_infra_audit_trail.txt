@@ -1,0 +1,28 @@
+CLOUD FORENSIC INVESTIGATION DIVISION
+CENTRAL INVESTIGATION INFRASTRUCTURE AUDIT REPORT
+
+Case Identifier: CC-2026-NDLS-0518
+Cloud Service Provider: Amazon Web Services (AWS Asia Pacific - Mumbai ap-south-1)
+Account ID: 491820491820 (Production Financial VPC)
+Audit Window: 2026-09-29 00:00:00 UTC to 2026-10-01 23:59:59 UTC
+
+AWS CLOUDTRAIL IMMUTABLE EVENT CHRONOLOGY:
+1. Event ID: 881f23c9-91a2-4c28-98f1-a1b2c3d4e5f6
+   Timestamp: 2026-09-30 08:44:12 UTC
+   Event Name: CreateAccessKey
+   Source IP: 103.21.244.0 (VPN Gateway, Mumbai)
+   User Identity: IAMUser: "sysadmin-core"
+   Status: Success. Access Key ID AKIA9182948192A generated without dual-authorization.
+
+2. Event ID: 991a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c
+   Timestamp: 2026-09-30 08:49:33 UTC
+   Event Name: GetObject (Mass S3 Bucket Download)
+   Bucket: s3://confidential-client-ledger-backup-2026
+   Object Key: /export/full_financial_ledger_2025_2026.parquet
+   Bytes Transferred: 4.72 GB
+   Status: Success (Signed with compromised AKIA9182948192A)
+
+CRYPTOGRAPHIC INTEGRITY:
+CloudTrail Digest File SHA-256: 4f1a28d9c72e19a4b8502847c1a2e3894b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e
+KMS Key ARN: arn:aws:kms:ap-south-1:491820491820:key/882194a0-bc12-4f91-8812-a1b2c3d4e5f6
+Forensic Officer: Technical Director, CERT-In / Independent Judicial Audit

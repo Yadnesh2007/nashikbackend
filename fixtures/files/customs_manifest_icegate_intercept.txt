@@ -1,0 +1,21 @@
+CENTRAL BOARD OF INDIRECT TAXES AND CUSTOMS (CBIC)
+DIRECTORATE OF REVENUE INTELLIGENCE (DRI) & SPECIAL CBI ECONOMIC OFFENCES WING
+ICEGATE ELECTRONIC BILL OF LADING & CONTAINER INTERCEPT AUDIT
+
+Case Reference: CC-2026-NDLS-0518
+Port of Origin: Port of Jebel Ali, UAE
+Port of Discharge: Nhava Sheva (JNPT), Maharashtra, India
+Electronic Cargo Tracking System (ECTS) Seal ID: RFID-ECTS-991204-IN
+Bill of Lading No: MSCUJN91820491 (Electronic Manifest No: 2026/0891)
+
+CARGO MANIFEST TELEMETRY & PHYSICAL INSPECTION:
+- Declared Commodity: High-Density Polyethylene Granules (HS Code: 39012000)
+- Actual Intercepted Consignment: 1,200 Commercial Radio Telemetry & Dual-Use Signal Interception Units
+- Gross Weight: Declared 24,000 kg / Physical Weighbridge 24,180 kg (+180 kg discrepancy)
+- Tamper-Evident RFID Seal Status: Electronic RFID seal reported 'UNCOMPROMISED', but physical high-security bolt seal was cut and re-welded with counterfeit serial number.
+
+ELECTRONIC SIGNATURE RECORD:
+- ICEGATE Submission Digital Signature Certificate (DSC): Issued to Apex Logistics Authorized Signatory
+- Timestamp of Manifest Lock: 2026-09-29 18:45:22 IST
+- Digest SHA-256: 3b14a9c8e7f201d4b859203847c1a2e3894b5c6d7e8f9a0b1c2d3e4f5a6b7c8d
+- Seizing Authority: Additional Commissioner of Customs (Enforcement), JNPT
