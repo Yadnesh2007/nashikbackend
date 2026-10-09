@@ -182,17 +182,17 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
     <div class="role-badge mono" id="sidebarRoleLabel">PUBLIC PROSECUTOR</div>
 
     <nav class="nav">
-      <a class="on" data-tab="workspace" id="nav-workspace">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="13" y2="17"></line></svg>
-        Case Workspace
+      <a class="on" data-tab="signin" id="nav-signin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        Sign In / Personas
       </a>
       <a data-tab="upload" id="nav-upload">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path></svg>
         Ingestion Studio
       </a>
-      <a data-tab="custody" id="nav-custody">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="18" r="3"></circle><path d="M8.5 8.5l7 7"></path></svg>
-        Custody & Lineage
+      <a data-tab="workspace" id="nav-workspace">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line><line x1="9" y1="17" x2="13" y2="17"></line></svg>
+        Case Workspace
       </a>
       <a data-tab="review" id="nav-review">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -206,9 +206,9 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
         Audit & Blockchain
       </a>
-      <a data-tab="signin" id="nav-signin">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-        Sign In / Personas
+      <a data-tab="custody" id="nav-custody">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="18" r="3"></circle><path d="M8.5 8.5l7 7"></path></svg>
+        Custody & Lineage
       </a>
     </nav>
 
@@ -281,7 +281,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
     <!-- =================================================================== -->
     <!-- VIEW 1: CASE WORKSPACE & PASSPORT (Board 2)                         -->
     <!-- =================================================================== -->
-    <section class="view-panel active" id="view-workspace">
+    <section class="view-panel" id="view-workspace">
       <div style="display:flex; gap:20px; align-items:flex-start;">
 
         <!-- Left: Document Ledger & Custody Box -->
@@ -774,7 +774,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
     <!-- =================================================================== -->
     <!-- VIEW 7: SIGN IN & PERSONAS (Board 1)                                -->
     <!-- =================================================================== -->
-    <section class="view-panel" id="view-signin">
+    <section class="view-panel active" id="view-signin">
       <div class="r" style="display:flex; background:#0F1C2B; border-radius:14px; overflow:hidden; color:#EDE9DF;">
 
         <!-- Left Showcase -->
