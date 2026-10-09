@@ -9,3 +9,5 @@ __pycache__/
 storage_data/
 .DS_Store
 *.bin
+.netlify/
+frontend/static/
