@@ -1,0 +1,753 @@
+openapi: 3.1.0
+info:
+  title: EvidenceShield AI API
+  description: Tamper-Evident Zero-Trust Judicial & Forensic Document Management System
+  version: 1.0.0-s2
+servers:
+  - url: /api/v1
+    description: Current Base API Server
+
+paths:
+  /auth/session:
+    get:
+      summary: Get Current Authenticated Session
+      operationId: getCurrentSession
+      responses:
+        '200':
+          description: Active user session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionInfo'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/mfa/verify:
+    post:
+      summary: Verify TOTP MFA for Fresh Session
+      operationId: verifyMfa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  example: "123456"
+      responses:
+        '200':
+          description: MFA verified, freshness window updated to 10 minutes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  verified: { type: boolean }
+                  mfa_verified_at: { type: string, format: date-time }
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /cases:
+    get:
+      summary: List Accessible Cases
+      operationId: listCases
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        '200':
+          description: Paginated list of cases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseListResponse'
+    post:
+      summary: Create New Case
+      operationId: createCase
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseCreateRequest'
+      responses:
+        '201':
+          description: Case created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /cases/{id}:
+    get:
+      summary: Get Case Details and Documents
+      operationId: getCaseDetails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Case details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseDetail'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /cases/{id}/grants:
+    post:
+      summary: Issue Explicit Document or Case Grant
+      operationId: createGrant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantCreateRequest'
+      responses:
+        '201':
+          description: Grant created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grant'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /cases/{id}/upload-sessions:
+    post:
+      summary: Create Secure Ingestion Upload Session
+      operationId: createUploadSession
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadSessionCreateRequest'
+      responses:
+        '201':
+          description: Upload session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadSession'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /upload-sessions/{id}/content:
+    put:
+      summary: Stream Raw Evidence Bytes into Upload Session
+      operationId: streamUploadContent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Upload, encryption and baseline committed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentVersion'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+
+  /versions/{id}:
+    get:
+      summary: Get Version Metadata
+      operationId: getVersion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentVersion'
+
+  /versions/{id}/content:
+    get:
+      summary: Verified Decrypted Evidence Download
+      description: Re-authenticates AES-GCM tag, checks SHA-256 digest, checks anchor state. Sends Cache-Control no-store.
+      operationId: getVersionContent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Decrypted verified plaintext stream
+          headers:
+            Cache-Control:
+              schema: { type: string, example: "no-store, no-cache, must-revalidate" }
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+
+  /versions/{id}/verify:
+    post:
+      summary: Trigger Explicit Multi-Stage Cryptographic Verification
+      operationId: verifyVersion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Detailed verification outcome
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResult'
+
+  /versions/{id}/passport:
+    get:
+      summary: Get Signed Evidence Passport
+      operationId: getVersionPassport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Full Evidence Passport with Merkle proof and blockchain anchor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidencePassport'
+
+  /versions/{id}/transfers:
+    post:
+      summary: Initiate Chain of Custody Transfer
+      operationId: initiateTransfer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferCreateRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustodyTransfer'
+
+  /transfers/{id}/accept:
+    post:
+      summary: Accept Custody Transfer
+      operationId: acceptTransfer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notes: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustodyTransfer'
+
+  /transfers/{id}/reject:
+    post:
+      summary: Reject Custody Transfer
+      operationId: rejectTransfer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustodyTransfer'
+
+  /versions/{id}/derivatives:
+    post:
+      summary: Register Forensic Derivative
+      operationId: registerDerivative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DerivativeCreateRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentVersion'
+
+  /cases/{id}/analysis:
+    post:
+      summary: Trigger Case AI Summary or Inconsistency Analysis
+      operationId: triggerAnalysis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [analysis_type, document_version_ids]
+              properties:
+                analysis_type:
+                  type: string
+                  enum: [SUMMARY, TIMELINE, INCONSISTENCY]
+                document_version_ids:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        '202':
+          description: Job accepted and queued in durable outbox
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisJobResponse'
+
+  /cases/{id}/alerts:
+    get:
+      summary: List Case Integrity Alerts
+      operationId: listAlerts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IntegrityAlert'
+
+  /alerts/{id}/review:
+    post:
+      summary: Review and Set Disposition for Alert
+      operationId: reviewAlert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertReviewRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrityAlert'
+
+  /cases/{id}/readiness:
+    get:
+      summary: Evidence Readiness Preflight Checklist
+      description: Returns missing metadata, signatures, unanchored items, unreviewed alerts. Never returns guilt or admissibility scores.
+      operationId: getReadiness
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessChecklist'
+
+  /cases/{id}/exports:
+    post:
+      summary: Generate Certified Judicial Export Package
+      operationId: generateExport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: ZIP bundle metadata and download token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportPackageResponse'
+
+components:
+  schemas:
+    SessionInfo:
+      type: object
+      required: [user_id, username, role, agency, mfa_verified, mfa_fresh]
+      properties:
+        user_id: { type: string }
+        username: { type: string }
+        role:
+          type: string
+          enum: [POLICE, FORENSIC_LAB, PROSECUTOR, SYSTEM_ADMIN, AUDITOR]
+        agency: { type: string }
+        mfa_verified: { type: boolean }
+        mfa_fresh: { type: boolean }
+
+    Case:
+      type: object
+      required: [case_id, case_number, title, agency, lead_investigator_id, created_at]
+      properties:
+        case_id: { type: string, format: uuid }
+        case_number: { type: string }
+        title: { type: string }
+        description: { type: string }
+        agency: { type: string }
+        lead_investigator_id: { type: string }
+        created_at: { type: string, format: date-time }
+
+    CaseListResponse:
+      type: object
+      required: [items, total, limit, offset]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Case' }
+        total: { type: integer }
+        limit: { type: integer }
+        offset: { type: integer }
+
+    CaseCreateRequest:
+      type: object
+      required: [case_number, title, agency]
+      properties:
+        case_number: { type: string }
+        title: { type: string }
+        description: { type: string }
+        agency: { type: string }
+
+    CaseDetail:
+      allOf:
+        - $ref: '#/components/schemas/Case'
+        - type: object
+          properties:
+            documents:
+              type: array
+              items: { $ref: '#/components/schemas/DocumentSummary' }
+            assignments:
+              type: array
+              items: { type: object }
+
+    DocumentSummary:
+      type: object
+      required: [document_id, title, classification, current_version_id, current_state]
+      properties:
+        document_id: { type: string, format: uuid }
+        title: { type: string }
+        classification:
+          type: string
+          enum: [INTERNAL, SENSITIVE, RESTRICTED]
+        current_version_id: { type: string, format: uuid }
+        current_state:
+          type: string
+          enum: [INGESTING, READY_PENDING_ANCHOR, VERIFIED_ANCHORED, QUARANTINED, FAILED]
+
+    DocumentVersion:
+      type: object
+      required: [version_id, document_id, case_id, version_number, state, digest, size_bytes, mime_type, file_name, created_at]
+      properties:
+        version_id: { type: string, format: uuid }
+        document_id: { type: string, format: uuid }
+        case_id: { type: string, format: uuid }
+        version_number: { type: integer }
+        state:
+          type: string
+          enum: [INGESTING, READY_PENDING_ANCHOR, VERIFIED_ANCHORED, QUARANTINED, FAILED]
+        digest: { type: string }
+        size_bytes: { type: integer }
+        mime_type: { type: string }
+        file_name: { type: string }
+        page_count: { type: integer, nullable: true }
+        declared_capture_time: { type: string, format: date-time, nullable: true }
+        declared_timezone: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        sealed_at: { type: string, format: date-time, nullable: true }
+
+    UploadSessionCreateRequest:
+      type: object
+      required: [file_name, mime_type, size_bytes]
+      properties:
+        file_name: { type: string }
+        mime_type: { type: string }
+        size_bytes: { type: integer }
+        declared_capture_time: { type: string, format: date-time }
+        declared_timezone: { type: string }
+        classification:
+          type: string
+          enum: [INTERNAL, SENSITIVE, RESTRICTED]
+          default: INTERNAL
+
+    UploadSession:
+      type: object
+      required: [session_id, case_id, file_name, expires_at]
+      properties:
+        session_id: { type: string, format: uuid }
+        case_id: { type: string, format: uuid }
+        file_name: { type: string }
+        expires_at: { type: string, format: date-time }
+
+    GrantCreateRequest:
+      type: object
+      required: [principal_id, actions]
+      properties:
+        document_id: { type: string, format: uuid, nullable: true }
+        principal_id: { type: string }
+        actions:
+          type: array
+          items: { type: string }
+        expires_at: { type: string, format: date-time, nullable: true }
+
+    Grant:
+      type: object
+      required: [grant_id, principal_id, actions, created_at]
+      properties:
+        grant_id: { type: string, format: uuid }
+        principal_id: { type: string }
+        actions: { type: array, items: { type: string } }
+        created_at: { type: string, format: date-time }
+
+    TransferCreateRequest:
+      type: object
+      required: [recipient_id, recipient_agency, reason]
+      properties:
+        recipient_id: { type: string }
+        recipient_agency: { type: string }
+        reason: { type: string }
+
+    CustodyTransfer:
+      type: object
+      required: [transfer_id, version_id, case_id, sender_id, recipient_id, state, initiated_at]
+      properties:
+        transfer_id: { type: string, format: uuid }
+        version_id: { type: string, format: uuid }
+        case_id: { type: string, format: uuid }
+        sender_id: { type: string }
+        recipient_id: { type: string }
+        state:
+          type: string
+          enum: [PENDING, ACCEPTED, REJECTED, CANCELLED]
+        reason: { type: string }
+        initiated_at: { type: string, format: date-time }
+        responded_at: { type: string, format: date-time, nullable: true }
+
+    DerivativeCreateRequest:
+      type: object
+      required: [operation, tool_name, tool_version, file_name, mime_type, content_base64]
+      properties:
+        operation: { type: string }
+        tool_name: { type: string }
+        tool_version: { type: string }
+        file_name: { type: string }
+        mime_type: { type: string }
+        content_base64: { type: string }
+
+    VerificationResult:
+      type: object
+      required: [version_id, is_valid, failure_stage, details]
+      properties:
+        version_id: { type: string, format: uuid }
+        is_valid: { type: boolean }
+        failure_stage:
+          type: string
+          enum: [NONE, CIPHERTEXT_AUTH, DIGEST_VERIFICATION, SIGNATURE_VERIFICATION, MERKLE_PROOF, BLOCKCHAIN_RECEIPT]
+        details: { type: string }
+        verified_at: { type: string, format: date-time }
+
+    EvidencePassport:
+      type: object
+      required: [passport_version, document, audit_event, merkle_proof, blockchain_anchor]
+      properties:
+        passport_version: { type: string }
+        document: { type: object }
+        audit_event: { type: object }
+        merkle_proof: { type: object }
+        blockchain_anchor: { type: object }
+
+    IntegrityAlert:
+      type: object
+      required: [alert_id, version_id, case_id, alert_type, failure_stage, status, created_at]
+      properties:
+        alert_id: { type: string, format: uuid }
+        version_id: { type: string, format: uuid }
+        case_id: { type: string, format: uuid }
+        alert_type: { type: string }
+        failure_stage: { type: string }
+        error_details: { type: string }
+        status:
+          type: string
+          enum: [OPEN, INVESTIGATING, CONFIRMED_TAMPERED, DISMISSED_FALSE_POSITIVE]
+        disposition_notes: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+
+    AlertReviewRequest:
+      type: object
+      required: [status, disposition_notes]
+      properties:
+        status:
+          type: string
+          enum: [CONFIRMED_TAMPERED, DISMISSED_FALSE_POSITIVE]
+        disposition_notes: { type: string }
+
+    ReadinessChecklist:
+      type: object
+      required: [case_id, is_ready, checks, omissions, next_actions]
+      properties:
+        case_id: { type: string, format: uuid }
+        is_ready: { type: boolean }
+        checks:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              passed: { type: boolean }
+              detail: { type: string }
+        omissions:
+          type: array
+          items: { type: string }
+        next_actions:
+          type: array
+          items: { type: string }
+
+    AnalysisJobResponse:
+      type: object
+      required: [job_id, status]
+      properties:
+        job_id: { type: string, format: uuid }
+        status: { type: string }
+
+    ExportPackageResponse:
+      type: object
+      required: [export_id, case_id, download_url, expires_at]
+      properties:
+        export_id: { type: string, format: uuid }
+        case_id: { type: string, format: uuid }
+        download_url: { type: string }
+        expires_at: { type: string, format: date-time }
+
+    ErrorEnvelope:
+      type: object
+      required: [type, title, status, detail, instance, code, timestamp]
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string }
+        code: { type: string }
+        timestamp: { type: string, format: date-time }
+
+  responses:
+    BadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    UnauthorizedError:
+      description: Authentication required or invalid
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    ForbiddenError:
+      description: Action denied by OPA zero-trust policy
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+    UnprocessableEntityError:
+      description: Cryptographic or semantic validation failed
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorEnvelope' }

@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: evidenceshield_crypto
+Version: 1.0.0
+Summary: EvidenceShield AI Cryptography & Merkle Proof Engine
+Author: EvidenceShield Crypto Team
+Requires-Dist: cryptography>=41.0.0
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: summary

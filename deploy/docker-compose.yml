@@ -1,0 +1,126 @@
+version: '3.8'
+
+networks:
+  evidenceshield_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  seaweedfs_data:
+  vault_data:
+  anvil_data:
+
+services:
+  # 1. Reverse Proxy / HTTPS Gateway
+  gateway:
+    image: nginx:1.25-alpine
+    container_name: evidenceshield_gateway
+    ports:
+      - "8443:443"
+      - "8000:8000"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+    networks:
+      - evidenceshield_net
+
+  # 2. Authoritative Backend Service
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.backend
+    container_name: evidenceshield_backend
+    environment:
+      - EVIDENCESHIELD_ENV=production
+      - EVIDENCESHIELD_SECRET_KEY=change-in-production-super-secret-key-32b
+      - DATABASE_URL=postgresql+asyncpg://evidenceshield:evidenceshield_pass@postgres:5432/evidenceshield_db
+      - DATABASE_SYNC_URL=postgresql://evidenceshield:evidenceshield_pass@postgres:5432/evidenceshield_db
+      - S3_ENDPOINT_URL=http://seaweedfs:8333
+      - S3_ACCESS_KEY=seaweed_admin
+      - S3_SECRET_KEY=seaweed_secret
+      - S3_BUCKET_NAME=evidence-ciphertext
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=evidenceshield_vault_token_dev
+      - OPA_URL=http://opa:8181/v1/data/evidenceshield/authz
+      - KEYCLOAK_URL=http://keycloak:8080
+      - ANVIL_RPC_URL=http://anvil:8545
+      - ANCHOR_CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=qwen3:4b
+    depends_on:
+      - postgres
+      - seaweedfs
+      - vault
+      - opa
+    networks:
+      - evidenceshield_net
+
+  # 3. PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: evidenceshield_postgres
+    environment:
+      - POSTGRES_USER=evidenceshield
+      - POSTGRES_PASSWORD=evidenceshield_pass
+      - POSTGRES_DB=evidenceshield_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - evidenceshield_net
+
+  # 4. SeaweedFS S3 Ciphertext Storage
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: evidenceshield_seaweedfs
+    command: "server -s3"
+    volumes:
+      - seaweedfs_data:/data
+    networks:
+      - evidenceshield_net
+
+  # 5. HashiCorp Vault (Transit Engine)
+  vault:
+    image: hashicorp/vault:1.16
+    container_name: evidenceshield_vault
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=evidenceshield_vault_token_dev
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data:/vault/file
+    networks:
+      - evidenceshield_net
+
+  # 6. Open Policy Agent (OPA)
+  opa:
+    image: openpolicyagent/opa:0.63.0
+    container_name: evidenceshield_opa
+    command:
+      - "run"
+      - "--server"
+      - "--addr=0.0.0.0:8181"
+      - "/policies/evidence_policy.rego"
+    volumes:
+      - ../policies:/policies:ro
+    networks:
+      - evidenceshield_net
+
+  # 7. Local Anvil Ethereum Node
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    container_name: evidenceshield_anvil
+    entrypoint: ["anvil", "--host", "0.0.0.0", "--chain-id", "31337"]
+    volumes:
+      - anvil_data:/root/.foundry/anvil
+    networks:
+      - evidenceshield_net
+
+  # 8. Local Ollama LLM Service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: evidenceshield_ollama
+    networks:
+      - evidenceshield_net

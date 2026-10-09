@@ -1,0 +1,136 @@
+{
+  "version": "1.0.0-s2",
+  "seed_users": [
+    {
+      "username": "officer_sharma",
+      "role": "POLICE",
+      "agency": "MUMBAI_CRIME_BRANCH",
+      "display_name": "Inspector R. Sharma",
+      "email": "sharma@mumbaipolice.gov.in",
+      "totp_secret": "JBSWY3DPEHPK3PXP"
+    },
+    {
+      "username": "examiner_patel",
+      "role": "FORENSIC_LAB",
+      "agency": "STATE_FORENSIC_SCI_LAB",
+      "display_name": "Examiner S. Patel",
+      "email": "patel@fsl.maharashtra.gov.in",
+      "totp_secret": "JBSWY3DPEHPK3PXP"
+    },
+    {
+      "username": "prosecutor_iyer",
+      "role": "PROSECUTOR",
+      "agency": "MAHARASHTRA_PROSECUTION",
+      "display_name": "Public Prosecutor A. Iyer",
+      "email": "iyer@prosecution.gov.in",
+      "totp_secret": "JBSWY3DPEHPK3PXP"
+    },
+    {
+      "username": "auditor_verma",
+      "role": "AUDITOR",
+      "agency": "INDEPENDENT_JUDICIAL_AUDIT",
+      "display_name": "Auditor N. Verma",
+      "email": "verma@judicialaudit.gov.in",
+      "totp_secret": "JBSWY3DPEHPK3PXP"
+    },
+    {
+      "username": "unauthorized_cop",
+      "role": "POLICE",
+      "agency": "DELHI_SPECIAL_CELL",
+      "display_name": "Sub-Inspector K. Yadav",
+      "email": "yadav@delhipolice.gov.in",
+      "totp_secret": "JBSWY3DPEHPK3PXP"
+    }
+  ],
+  "seed_cases": [
+    {
+      "case_id": "c7b2a9e0-82a1-4b13-912f-6825a07e1123",
+      "case_number": "FIR-2026-MUM-0891",
+      "title": "State vs. Unknown Suspects (Cyber Theft & Vehicle Hit-and-Run)",
+      "agency": "MUMBAI_CRIME_BRANCH",
+      "lead_investigator_id": "officer_sharma",
+      "assigned_principals": [
+        "officer_sharma",
+        "examiner_patel",
+        "prosecutor_iyer"
+      ]
+    },
+    {
+      "case_id": "d2a10000-0000-4b13-912f-000000000099",
+      "case_number": "FIR-2026-DEL-0099",
+      "title": "State of Delhi vs. Unrelated Suspect",
+      "agency": "DELHI_SPECIAL_CELL",
+      "lead_investigator_id": "unauthorized_cop",
+      "assigned_principals": [
+        "unauthorized_cop"
+      ]
+    }
+  ],
+  "seed_documents": [
+    {
+      "document_id": "d14a58b2-7634-4f80-9ea3-90d2381e4b88",
+      "version_id": "v981f23c-15a4-41b2-bf9e-10842e617d91",
+      "case_id": "c7b2a9e0-82a1-4b13-912f-6825a07e1123",
+      "title": "Witness Statement - Primary Witness",
+      "classification": "SENSITIVE",
+      "file": {
+        "path": "fixtures/files/statement_fir_0891.pdf",
+        "size_bytes": 644,
+        "sha256": "45ec905884247241d97b52b838826e3c67cce72e64a40656ca3d1f77845e73aa"
+      },
+      "expected_state": "VERIFIED_ANCHORED"
+    },
+    {
+      "document_id": "d22b67c3-8745-4a91-afb4-a1e3492f5c99",
+      "version_id": "v112a34d-26b5-42c3-ca0f-21953f728e02",
+      "case_id": "c7b2a9e0-82a1-4b13-912f-6825a07e1123",
+      "title": "Forensic Examination Report - Telemetry & Ballistics",
+      "classification": "RESTRICTED",
+      "file": {
+        "path": "fixtures/files/forensic_report_0412.txt",
+        "size_bytes": 417,
+        "sha256": "b40aa23e7c4101fb5df7f0c6763a13694ff967a79868d1be8f10e36b8b9bc42d"
+      },
+      "expected_state": "VERIFIED_ANCHORED"
+    }
+  ],
+  "fixtures": {
+    "valid_fir_statement": {
+      "path": "fixtures/files/statement_fir_0891.pdf",
+      "size_bytes": 644,
+      "sha256": "45ec905884247241d97b52b838826e3c67cce72e64a40656ca3d1f77845e73aa"
+    },
+    "valid_lab_report": {
+      "path": "fixtures/files/forensic_report_0412.txt",
+      "size_bytes": 417,
+      "sha256": "b40aa23e7c4101fb5df7f0c6763a13694ff967a79868d1be8f10e36b8b9bc42d"
+    },
+    "valid_crime_photo": {
+      "path": "fixtures/files/crime_scene_photo_01.jpg",
+      "size_bytes": 113,
+      "sha256": "cb7080c3a21e3441f0e812a10d141908115c3690a4a5b9184d5551975041b73b"
+    },
+    "corrupt_one_bit": {
+      "path": "fixtures/files/statement_fir_0891_corrupt.pdf",
+      "size_bytes": 644,
+      "sha256": "85118bf73c26397e1c76d4ab2d8c9657a7955fd0b57589d6a2c1a9b5880ed1eb"
+    }
+  },
+  "expected_outcomes": {
+    "cross_case_unauthorized_cop": {
+      "target_version_id": "v981f23c-15a4-41b2-bf9e-10842e617d91",
+      "expected_http_status": 403,
+      "expected_error_code": "FORBIDDEN"
+    },
+    "one_bit_corrupt_quarantine": {
+      "expected_error_stage": "CIPHERTEXT_AUTH_FAILED",
+      "resulting_state": "QUARANTINED",
+      "alert_status": "OPEN"
+    },
+    "custody_gap_unacknowledged": {
+      "scenario": "Police initiates transfer to Lab; Lab has not accepted",
+      "gap_flagged": true,
+      "readiness_pass": false
+    }
+  }
+}

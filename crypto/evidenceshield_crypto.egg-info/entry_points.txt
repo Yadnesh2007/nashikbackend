@@ -1,0 +1,2 @@
+[console_scripts]
+evidenceshield-verify = evidenceshield_crypto.cli:main

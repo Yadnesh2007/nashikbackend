@@ -1,0 +1,11 @@
+.kilo/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.db
+*.sqlite
+storage_data/
+.DS_Store
+*.bin

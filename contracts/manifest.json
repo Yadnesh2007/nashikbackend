@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0-s2",
+  "generated_at": "2026-10-09T16:35:00Z",
+  "baseline": "S2 Step-by-Step Implementation Baseline",
+  "files": {
+    "domain-names.md": {
+      "path": "contracts/domain-names.md",
+      "sha256": "238281c3c18e4ac34117d65b4362867179256084230a5f69119c180e4824bc9c",
+      "size_bytes": 7243
+    },
+    "state-machines.md": {
+      "path": "contracts/state-machines.md",
+      "sha256": "e3614f0bdb66d252de665a1ae6946891cff622804123577372a4f4f7ce4a38c1",
+      "size_bytes": 6881
+    },
+    "crypto-interface.md": {
+      "path": "contracts/crypto-interface.md",
+      "sha256": "bcf4ed915320ee76c9f8c9c914c57f25c87843cb0e125bcd2dfe3eb408c6afcf",
+      "size_bytes": 8782
+    },
+    "runtime.md": {
+      "path": "contracts/runtime.md",
+      "sha256": "e069a12f3ab5ba14d03ad35faab544cafa51fda96ea0cc3186ceec4e5dc173df",
+      "size_bytes": 4587
+    },
+    "openapi.yaml": {
+      "path": "contracts/openapi.yaml",
+      "sha256": "96b31f6f7922dc0c5e8e283842a2b478333b62c0afe476858096f8bcf526cf9e",
+      "size_bytes": 22909
+    }
+  }
+}

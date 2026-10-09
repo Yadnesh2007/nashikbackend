@@ -1,0 +1,8 @@
+STATE FORENSIC SCIENCE LABORATORY, MAHARASHTRA
+EXAMINATION REPORT: FSL-2026-PHY-0412
+Date of Receipt: 2026-10-03
+Item Description: Physical evidence and vehicle telemetry recovered from scene.
+Findings:
+1. Vehicle telemetry confirms presence of MH-01-AB-1234 at scene on 2026-10-01 at 22:28 IST.
+2. Paint transfer sample PT-1 matches suspect vehicle specifications.
+Signed: Examiner Patel, Senior Scientific Officer.
