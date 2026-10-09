@@ -158,14 +158,14 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
 /* Merkle SVG animation */
 .ln { stroke-dasharray: 6 3; animation: bar 1.5s linear infinite; }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .app-container { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; }
+/* Hide top case header and tamper alert banner on 1st landing page (Sign In / Personas) */
+body.on-signin .top-header,
+body.on-signin #quarantineBanner {
+  display: none !important;
 }
 </style>
 </head>
-<body class="ev">
+<body class="ev on-signin">
 
 <div class="app-container">
 
@@ -967,6 +967,12 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
       p.classList.toggle('active', p.id === `view-${tabId}`);
     });
 
+    if (tabId === 'signin') {
+      document.body.classList.add('on-signin');
+    } else {
+      document.body.classList.remove('on-signin');
+    }
+
     if (tabId === 'workspace') loadCaseWorkspace();
     if (tabId === 'custody') loadCustodyView();
     if (tabId === 'review') loadReviewView();
@@ -982,7 +988,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
   });
 
   // Login Persona
-  async function loginPersona(username) {
+  async function loginPersona(username, silent = false) {
     currentPersona = username;
     const prof = PERSONAS[username] || PERSONAS['prosecutor_iyer'];
     $('activeUserDisplayName').textContent = prof.name;
@@ -1003,11 +1009,11 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
       });
       const data = await res.json();
       authToken = data.token || data.access_token;
-      showToast(`Signed in as ${prof.name} (${prof.label})`, 'success');
+      if (!silent) showToast(`Signed in as ${prof.name} (${prof.label})`, 'success');
       loadCaseWorkspace();
     } catch (err) {
       console.error('Login failed', err);
-      showToast('Keycloak authentication failed', 'error');
+      if (!silent) showToast('Keycloak authentication failed', 'error');
     }
   }
 
@@ -1671,7 +1677,7 @@ body { min-height: 100vh; display: flex; flex-direction: column; background: #F4
 
   // Initialization
   (async () => {
-    await loginPersona('prosecutor_iyer');
+    await loginPersona('prosecutor_iyer', true);
     loadCaseWorkspace();
   })();
 
