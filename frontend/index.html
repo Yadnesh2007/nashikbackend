@@ -11,28 +11,8 @@
 <style>
 /* Reset & Base */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html {
-  background: #F4F1EA;
-  color: #14202E;
-  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-}
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #F4F1EA;
-  background-image:
-    radial-gradient(ellipse at 85% 15%, rgba(217, 164, 65, 0.08) 0%, transparent 45%),
-    radial-gradient(ellipse at 15% 75%, rgba(31, 74, 122, 0.05) 0%, transparent 50%),
-    url('/static/assets/bg-light-circuit.jpg');
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: cover;
-  background-attachment: fixed;
-  color: #14202E;
-}
+html { background: #F4F1EA; color: #14202E; font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.5; }
+body { min-height: 100vh; display: flex; flex-direction: column; background: #F4F1EA; color: #14202E; }
 
 /* Typography Tokens */
 .ev { font-family: 'IBM Plex Sans', sans-serif; color: #14202E; }
@@ -114,30 +94,8 @@ body {
 
 /* Layout Shell */
 .app-container { display: flex; width: 100%; min-height: 100vh; }
-.sidebar {
-  width: 240px;
-  background:
-    linear-gradient(180deg, rgba(15, 28, 43, 0.93) 0%, rgba(15, 28, 43, 0.97) 100%),
-    url('/static/assets/bg-dark-hero.jpg') center bottom / cover no-repeat;
-  color: #EDE9DF;
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex-shrink: 0;
-  box-shadow: 4px 0 24px rgba(15, 28, 43, 0.08);
-  position: relative;
-  z-index: 10;
-}
-.main-content {
-  flex: 1;
-  padding: 24px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-width: 0;
-  position: relative;
-}
+.sidebar { width: 240px; background: #0F1C2B; color: #EDE9DF; padding: 24px 16px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
+.main-content { flex: 1; padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
 /* Brand */
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; color: #EDE9DF; }
@@ -147,11 +105,11 @@ body {
 /* Nav Links */
 .nav { display: grid; gap: 3px; }
 .nav a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 7px; color: #CFCABB; text-decoration: none; font-size: 13.5px; font-weight: 500; transition: background 0.2s, color 0.2s; cursor: pointer; }
-.nav a:hover, .nav a.on { background: rgba(28, 51, 80, 0.7); color: #fff; }
+.nav a:hover, .nav a.on { background: #1C3350; color: #fff; }
 .nav a svg { width: 16px; height: 16px; stroke-width: 1.8; }
 
 /* Persona Card in Sidebar */
-.user-card { margin-top: auto; padding: 12px; border-radius: 8px; background: rgba(22, 40, 61, 0.85); backdrop-filter: blur(8px); font-size: 13px; color: #EDE9DF; }
+.user-card { margin-top: auto; padding: 12px; border-radius: 8px; background: #16283D; font-size: 13px; color: #EDE9DF; }
 .user-card .sub { font-size: 11px; color: #B9B4A6; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
 .user-card .dot { width: 7px; height: 7px; border-radius: 50%; background: #48BB78; display: inline-block; }
 
@@ -161,13 +119,13 @@ body {
 .top-header .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
 /* Select & Fields */
-.fld { width: 100%; height: 38px; padding: 0 12px; border: 1px solid #D6D0C2; border-radius: 7px; background: rgba(251, 250, 246, 0.9); font: 14px 'IBM Plex Sans', sans-serif; color: #14202E; outline: none; transition: border-color 0.2s; }
-.fld:focus { border-color: #A6782B; background: #fff; }
+.fld { width: 100%; height: 38px; padding: 0 12px; border: 1px solid #D6D0C2; border-radius: 7px; background: #FBFAF6; font: 14px 'IBM Plex Sans', sans-serif; color: #14202E; outline: none; transition: border-color 0.2s; }
+.fld:focus { border-color: #A6782B; }
 .lb { display: block; font: 600 11px 'IBM Plex Mono', monospace; color: #5B6472; letter-spacing: 0.08em; margin: 12px 0 5px; }
 
 /* Buttons */
-.btn { height: 38px; padding: 0 15px; border: 1px solid #0F1C2B; border-radius: 8px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(4px); color: #0F1C2B; font: 600 13.5px 'IBM Plex Sans', sans-serif; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; text-decoration: none; }
-.btn:hover { background: rgba(15,28,43,0.08); }
+.btn { height: 38px; padding: 0 15px; border: 1px solid #0F1C2B; border-radius: 8px; background: transparent; color: #0F1C2B; font: 600 13.5px 'IBM Plex Sans', sans-serif; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; text-decoration: none; }
+.btn:hover { background: rgba(15,28,43,0.06); }
 .btn.pri { background: #0F1C2B; color: #F4F1EA; border-color: #0F1C2B; }
 .btn.pri:hover { background: #1C3350; }
 .btn.gold { background: #D9A441; color: #0F1C2B; border-color: #D9A441; }
@@ -177,26 +135,10 @@ body {
 .btn.sm { height: 30px; padding: 0 10px; font-size: 12px; border-radius: 6px; }
 
 /* Cards & Panels */
-.card {
-  background: rgba(251, 250, 246, 0.88);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(214, 208, 194, 0.85);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 16px rgba(20, 32, 46, 0.03);
-}
+.card { background: #FBFAF6; border: 1px solid #D6D0C2; border-radius: 12px; padding: 20px; }
 
 /* Ledger Table */
-.tbl-wrap {
-  background: rgba(251, 250, 246, 0.90);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(214, 208, 194, 0.85);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(20, 32, 46, 0.03);
-}
+.tbl-wrap { background: #FBFAF6; border: 1px solid #D6D0C2; border-radius: 12px; overflow: hidden; }
 .row { display: grid; grid-template-columns: 2fr 1.1fr 1.6fr 1.4fr 1.1fr; align-items: center; gap: 12px; padding: 0 16px; height: 50px; border-top: 1px solid #E6E1D4; font-size: 13.5px; transition: background 0.15s; }
 .row:hover { background: #F8F5EC; }
 .row.header { height: 40px; border-top: 0; font-size: 11px; letter-spacing: 0.08em; color: #5B6472; background: #EFEBDF; font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
@@ -439,7 +381,7 @@ body {
           <h2 class="sf" style="font-size:24px; font-weight:500; margin-bottom:14px;">Ingest & Cryptographically Seal Exhibit</h2>
 
           <!-- Dropzone -->
-          <div id="dropzone" style="height:150px; border:2px dashed #A6782B; border-radius:12px; background: linear-gradient(135deg, rgba(248,245,236,0.9), rgba(244,241,234,0.85)), url('/static/assets/bg-light-ambient.jpg') center/cover no-repeat; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+          <div id="dropzone" style="height:150px; border:2px dashed #A6782B; border-radius:12px; background:#F8F5EC; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
             <svg style="animation:flt 2.4s ease-in-out infinite" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7A5410" stroke-width="1.8">
               <path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path>
             </svg>
@@ -578,7 +520,7 @@ body {
           </div>
 
           <!-- SVG DAG Diagram from Design -->
-          <div style="margin-top:16px; background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(248,245,236,0.85)), url('/static/assets/bg-light-cyber.jpg') center/cover no-repeat; border:1px solid #D6D0C2; border-radius:10px; padding:20px;">
+          <div style="margin-top:16px; background:#fff; border:1px solid #D6D0C2; border-radius:10px; padding:20px;">
             <svg viewBox="0 0 640 210" width="100%" fill="none">
               <g stroke="#A6782B" stroke-width="1.6">
                 <path class="ln" d="M170 100H240"></path>
@@ -827,7 +769,7 @@ body {
       <div class="r" style="display:flex; background:#0F1C2B; border-radius:14px; overflow:hidden; color:#EDE9DF;">
 
         <!-- Left Showcase -->
-        <section style="flex:1.2; padding:48px 56px; display:flex; flex-direction:column; justify-content:space-between; background: linear-gradient(135deg, rgba(15,28,43,0.92), rgba(20,38,58,0.96)), url('/static/assets/bg-dark-hero.jpg') center/cover no-repeat;">
+        <section style="flex:1.2; padding:48px 56px; display:flex; flex-direction:column; justify-content:space-between;">
           <div style="display:flex; align-items:center; gap:12px; font-weight:600;">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D9A441" stroke-width="1.8">
               <path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"></path>
@@ -878,7 +820,7 @@ body {
         </section>
 
         <!-- Right Sign-In Panel -->
-        <section style="flex:1; background: linear-gradient(180deg, rgba(244,241,234,0.94), rgba(244,241,234,0.97)), url('/static/assets/bg-light-hero.jpg') center/cover no-repeat; color:#14202E; padding:48px; display:flex; align-items:center; justify-content:center;">
+        <section style="flex:1; background:#F4F1EA; color:#14202E; padding:48px; display:flex; align-items:center; justify-content:center;">
           <div style="width:100%; max-width:360px;">
             <h2 class="sf" style="margin:0 0 6px; font-size:32px; font-weight:500;">Sign in</h2>
             <p style="margin:0 0 20px; color:#4B5563; font-size:14px; line-height:1.5;">
